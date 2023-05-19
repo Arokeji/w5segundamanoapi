@@ -14,7 +14,7 @@ const main = async () => {
   const { connect } = require("./db.js");
   const database = await connect();
 
-  // Configuracion del servidor
+  // Configuracion del servidor.
   const PORT = 3000;
   const app = express();
   app.use(express.json());
