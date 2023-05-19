@@ -1,0 +1,11 @@
+{
+    "files.watcherExclude": {
+        "**/node_modules/*/**": false
+    },
+    "explorer.autoRevealExclude": {
+        "**/node_modules": false
+    },
+    "files.exclude": {
+        "**/node_modules": true
+    }
+}
