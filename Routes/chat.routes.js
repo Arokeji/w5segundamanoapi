@@ -2,9 +2,6 @@ const express = require("express");
 
 // Modelos
 const { Chat } = require("../Models/Chat.js");
-// const { User } = require("../Models/User.js");
-// const { Product } = require("../Models/Product.js");
-// const { Message } = require("../Models/Message.js");
 
 const router = express.Router();
 
@@ -16,7 +13,8 @@ router.get("/", async (req, res) => {
     const limit = parseInt(req.query.limit);
     const chats = await Chat.find()
       .limit(limit)
-      .skip((page - 1) * limit);
+      .skip((page - 1) * limit)
+      .populate("message");
 
     // Num total de elementos
     const totalElements = await Chat.countDocuments();
@@ -39,20 +37,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    let chat = await Chat.findById(id);
-
+    const chat = await Chat.findById(id).populate("message");
     if (chat) {
-      const includePlayers = req.query.includePlayers === "true";
-
-      if (includePlayers) {
-        const players = await Player.find({ chat: id });
-        if (players) {
-          chat = chat.toObject();
-          chat.players = players;
-        }
-      }
-
-      res.json(team);
+      res.json(chat);
     } else {
       res.status(404).json({});
     }
