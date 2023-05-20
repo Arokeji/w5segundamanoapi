@@ -99,3 +99,5 @@ router.put("/:id", async (req, res, next) => {
     next(error);
   }
 });
+
+module.exports = { messageRouter: router };

@@ -4,7 +4,7 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../utils/token");
 const { User } = require("../Models/User.js");
-const { Products } = require("../Models/Product.js");
+const { Product } = require("../Models/Product.js");
 
 const upload = multer({ dest: "public" })
 const router = express.Router();
@@ -43,7 +43,7 @@ router.get("/:id", async (req, res, next) => {
       const temporalUser = user.toObject();
       const includeProducts = req.query.includeProducts === "true";
       if (includeProducts) {
-        const products = await Products.find({ owner: id });
+        const products = await Product.find({ owner: id });
         temporalUser.products = products;
       }
 

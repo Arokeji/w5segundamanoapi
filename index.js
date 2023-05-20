@@ -1,7 +1,7 @@
-const { userRoutes } = require("./Routes/user.routes.js");
-const { productRoutes } = require("./Routes/product.routes.js");
-const { messageRoutes } = require("./Routes/message.routes.js");
-const { chatRoutes } = require("./Routes/chat.routes.js");
+const { userRouter } = require("./Routes/user.routes.js");
+const { productRouter } = require("./Routes/product.routes.js");
+const { messageRouter } = require("./Routes/message.routes.js");
+const { chatRouter } = require("./Routes/chat.routes.js");
 
 const express = require("express");
 const cors = require("cors");
@@ -52,16 +52,17 @@ const main = async () => {
     console.log("🔑 Solicitando ruta message.");
     next();
   });
+
   app.use("/chat", (req, res, next) => {
     console.log("🔑 Solicitando ruta chat.");
     next();
   });
 
   // Uso del router
-  app.use("/user", userRoutes);
-  app.use("/product", productRoutes);
-  app.use("/message", messageRoutes);
-  app.use("/chat", chatRoutes);
+  app.use("/user", userRouter);
+  app.use("/product", productRouter);
+  app.use("/message", messageRouter);
+  app.use("/chat", chatRouter);
   app.use("/", router);
 
   // Middleware para la gestion de errores

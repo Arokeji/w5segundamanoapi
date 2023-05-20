@@ -1,18 +1,16 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { Product } = require("./Product.js");
-const { User } = require("./Product.js");
-const { Message } = require("./Message.js");
 
 const chatSchema = new Schema(
   {
     buyer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
     },
     seller: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
     },
     product: {
       type: mongoose.Schema.Types.ObjectId,
@@ -20,7 +18,7 @@ const chatSchema = new Schema(
     },
     messages: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: Message,
+      ref: "Message",
     },
   },
   {
