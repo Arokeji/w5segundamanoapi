@@ -10,22 +10,22 @@ const userSchema = new Schema(
       trim: true,
     },
     email: {
-        type: String,
-        trim: true,
-        required: true,
-        unique: true,
-        validate: {
-          validator: validator.isEmail,
-          message: "Email incorrecto",
-        },
+      type: String,
+      trim: true,
+      required: true,
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Email incorrecto",
+      },
     },
-    password: { 
-        type: String,
-        trim: true,
-        required: true,
-        minlength: [8, "La contraseña debe tener al menos 8 caracteres"],
-        select: false
-    }, 
+    password: {
+      type: String,
+      trim: true,
+      required: true,
+      minlength: [8, "La contraseña debe tener al menos 8 caracteres"],
+      select: false,
+    },
   },
   {
     timestamps: true,
