@@ -1,11 +1,13 @@
 const { userRoutes } = require("./Routes/user.routes.js");
+const { productRoutes } = require("./Routes/product.routes.js");
+const { messageRoutes } = require("./Routes/message.routes.js");
+const { chatRoutes } = require("./Routes/chat.routes.js");
 
 const express = require("express");
 const cors = require("cors");
 
-const corsWhiteList = ["http://localhost:3000", "http://localhost:3001", "https://s7validationcors.vercel.app"];
-
-// const corsWhiteList = "*";
+// Rutas permitidas por CORS
+const corsWhiteList = ["http://localhost:3000", "http://localhost:3001"];
 
 // La intencion del main es que sea una funcion async para poder hacer await en connect
 // para el despliegue en Vercel
@@ -21,35 +23,50 @@ const main = async () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(cors({ origin: corsWhiteList }));
 
-  // Rutas
+  // Respuestas basicas de rutas
   const router = express.Router();
   router.get("/", (req, res) => {
-    res.send(`Library API en entorno ${database.connection.name}`);
+    res.send(`Segunda Mano API usando ${database.connection.name}`);
   });
   router.get("*", (req, res) => {
-    res.status(404).send("La pagina solicitada no existe");
+    res.status(404).send("La página solicitada no existe");
   });
 
   // Middlewares de aplicación
   app.use((req, res, next) => {
     const date = new Date();
-    console.log(`Petición de tipo ${req.method} a la url ${req.originalUrl} el ${date}`);
+    console.log(`🔗 Petición de tipo ${req.method} a la url ${req.originalUrl} el ${date}`);
     next();
   });
 
-  // Middleware que afecta solo a /book/*
-  app.use("/book", (req, res, next) => {
-    console.log("Se ha solicitado la url de books.");
+  // Middleware para rutas concretas*
+  app.use("/user", (req, res, next) => {
+    console.log("🔑 Solicitando ruta user.");
+    next();
+  });
+  app.use("/product", (req, res, next) => {
+    console.log("🔑 Solicitando ruta product.");
+    next();
+  });
+  app.use("/message", (req, res, next) => {
+    console.log("🔑 Solicitando ruta message.");
+    next();
+  });
+  app.use("/chat", (req, res, next) => {
+    console.log("🔑 Solicitando ruta chat.");
     next();
   });
 
   // Uso del router
   app.use("/user", userRoutes);
+  app.use("/product", productRoutes);
+  app.use("/message", messageRoutes);
+  app.use("/chat", chatRoutes);
   app.use("/", router);
 
   // Middleware para la gestion de errores
   app.use((err, req, res, next) => {
-    console.log("::: ERROR :::");
+    console.log("🚩 ERROR 🚩");
     console.log(`Peticion fallida: ${req.method} a la url ${req.originalUrl}`);
     console.log(err);
 
@@ -62,7 +79,7 @@ const main = async () => {
       res.status(500).json(err);
     }
 
-    console.log("*** FIN DE ERROR ***");
+    console.log("🚩 FIN DE ERROR 🚩");
 
     console.error(err);
     res.status(500).send(err.stack);
