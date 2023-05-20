@@ -6,7 +6,7 @@ const { Product } = require("../Models/Product.js");
 const router = express.Router();
 
 // CRUD: READ
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     // Asi leemos query params
     const page = parseInt(req.query.page);
@@ -28,13 +28,12 @@ router.get("/", async (req, res) => {
 
     res.json(response);
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 
 // CRUD: READ
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const product = await Product.findById(id).populate("user");
@@ -44,13 +43,12 @@ router.get("/:id", async (req, res) => {
       res.status(404).json({});
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 
 // CRUD: CREATE
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   console.log(req.headers);
 
   try {
@@ -58,13 +56,12 @@ router.post("/", async (req, res) => {
     const createdProduct = await product.save();
     return res.status(201).json(createdProduct);
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 
 // CRUD: DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const productDeleted = await Product.findByIdAndDelete(id);
@@ -74,13 +71,12 @@ router.delete("/:id", async (req, res) => {
       res.status(404).json({});
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 
 // CRUD: UPDATE
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const productUpdated = await Product.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
@@ -90,8 +86,7 @@ router.put("/:id", async (req, res) => {
       res.status(404).json({});
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 
