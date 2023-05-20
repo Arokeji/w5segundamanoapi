@@ -1,37 +1,22 @@
 const express = require("express");
-const fs = require("fs");
 const multer = require("multer");
+const fs = require("fs");
+const bcrypt = require("bcrypt");
+const { generateToken } = require("../utils/token");
 const { User } = require("../Models/User.js");
+const { Products } = require("../Models/Product.js");
 
 const upload = multer({ dest: "public" })
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     console.log("Estamos en el middleware/user que comprueba parámetros");
 
     const page = req.query.page ? parseInt(req.query.page) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit) : 10;
 
-    if (!isNaN(page) && !isNaN(limit) && page > 0 && limit > 0) {
-      req.query.page = page;
-      req.query.limit = limit;
-      next();
-    } else {
-      console.log("Parámetros no válidos:");
-      console.log(JSON.stringify(req.query));
-      res.status(400).json({ error: "Params page or limit are not valid" });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/", async (req, res, next) => {
-  try {
-    const { page, limit } = req.query;
-
-    const userList = await User.find()
+    const users = await User.find()
       .limit(limit)
       .skip((page - 1) * limit);
 
@@ -41,7 +26,7 @@ router.get("/", async (req, res, next) => {
       totalItems: totalElements,
       totalPages: Math.ceil(totalElements / limit),
       currentPage: page,
-      data: userList,
+      data: users,
     };
 
     res.json(response);
@@ -53,9 +38,16 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
-    const user = await User.findById(id);
+    const user = await User.findById(id).select("+password");
     if (user) {
-      res.json(user);
+      const temporalUser = user.toObject();
+      const includeProducts = req.query.includeProducts === "true";
+      if (includeProducts) {
+        const products = await Products.find({ owner: id });
+        temporalUser.products = products;
+      }
+
+      res.json(temporalUser);
     } else {
       res.status(404).json({});
     }
@@ -107,9 +99,18 @@ router.delete("/:id", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
-    const userUpdated = await User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
-    if (userUpdated) {
-      res.json(userUpdated);
+
+    if (req.user.id !== id && req.user.email !== "admin@gmail.com") {
+      return res.status(401).json({ error: "No tienes autorización para realizar esta operación" });
+    }
+
+    const userToUpdate = await User.findById(id);
+    if (userToUpdate) {
+      Object.assign(userToUpdate, req.body);
+      await userToUpdate.save();
+      const userToSend = userToUpdate.toObject();
+      delete userToSend.password;
+      res.json(userToSend);
     } else {
       res.status(404).json({});
     }
@@ -143,4 +144,34 @@ router.post("/image-upload", upload.single("image"), async (req, res, next) => {
   }
 });
 
-module.exports = { bookRouter: router };
+// LOGIN DE USUARIOS
+router.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Se deben especificar los campos email y password" });
+    }
+
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      return res.status(401).json({ error: "Email y/o contraseña incorrectos" });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (match) {
+      const userWithoutPass = user.toObject();
+      delete userWithoutPass.password;
+
+      const jwtToken = generateToken(user._id, user.email);
+
+      return res.status(200).json({ token: jwtToken });
+    } else {
+      return res.status(401).json({ error: "Email y/o contraseña incorrectos" });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = { userRouter: router };
