@@ -17,15 +17,15 @@ const userSchema = new Schema(
         validate: {
           validator: validator.isEmail,
           message: "Email incorrecto",
+        },
     },
-},
     password: { 
         type: String,
         trim: true,
         required: true,
         minlength: [8, "La contraseña debe tener al menos 8 caracteres"],
         select: false
-  }, 
+    }, 
   },
   {
     timestamps: true,
