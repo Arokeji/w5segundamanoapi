@@ -2,21 +2,19 @@ const express = require("express");
 
 // Modelos
 const { Chat } = require("../Models/Chat.js");
-// const { User } = require("../Models/User.js");
-// const { Product } = require("../Models/Product.js");
-// const { Message } = require("../Models/Message.js");
 
 const router = express.Router();
 
 // CRUD: READ
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     // Asi leemos query params
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
     const chats = await Chat.find()
       .limit(limit)
-      .skip((page - 1) * limit);
+      .skip((page - 1) * limit)
+      .populate("message");
 
     // Num total de elementos
     const totalElements = await Chat.countDocuments();
@@ -36,34 +34,22 @@ router.get("/", async (req, res) => {
 });
 
 // CRUD: READ
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
-    let chat = await Chat.findById(id);
-
+    const chat = await Chat.findById(id).populate("message");
     if (chat) {
-      const includePlayers = req.query.includePlayers === "true";
-
-      if (includePlayers) {
-        const players = await Player.find({ chat: id });
-        if (players) {
-          chat = chat.toObject();
-          chat.players = players;
-        }
-      }
-
-      res.json(team);
+      res.json(chat);
     } else {
       res.status(404).json({});
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 
 // CRUD: CREATE
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   console.log(req.headers);
 
   try {
@@ -71,13 +57,12 @@ router.post("/", async (req, res) => {
     const createdChat = await chat.save();
     return res.status(201).json(createdChat);
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 
 // CRUD: DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const chatDeleted = await Chat.findByIdAndDelete(id);
@@ -87,13 +72,12 @@ router.delete("/:id", async (req, res) => {
       res.status(404).json({});
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 
 // CRUD: UPDATE
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const chatUpdated = await Chat.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
@@ -103,8 +87,7 @@ router.put("/:id", async (req, res) => {
       res.status(404).json({});
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    next(error);
   }
 });
 

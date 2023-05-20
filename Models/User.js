@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
@@ -31,6 +32,21 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre("save", async function (next) {
+  try {
+    // Si la contraseña ya estaba encriptada, no la encriptamos de nuevo
+    if (this.isModified("password")) {
+      const saltRounds = 10;
+      const passwordEncrypted = await bcrypt.hash(this.password, saltRounds);
+      this.password = passwordEncrypted;
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 const User = mongoose.model("User", userSchema);
 module.exports = { User };
