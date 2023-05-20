@@ -6,7 +6,7 @@ const { generateToken } = require("../utils/token");
 const { User } = require("../Models/User.js");
 const { Product } = require("../Models/Product.js");
 
-const upload = multer({ dest: "public" })
+const upload = multer({ dest: "public" });
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
@@ -78,7 +78,7 @@ router.post("/", async (req, res, next) => {
     const createdUser = await user.save();
     return res.status(201).json(createdUser);
   } catch (error) {
-    next(error)
+    next(error);
   }
 });
 

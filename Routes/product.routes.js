@@ -1,8 +1,11 @@
 const express = require("express");
+const multer = require("multer");
+const fs = require("fs");
 
 // Modelos
 const { Product } = require("../Models/Product.js");
 
+const upload = multer({ dest: "public" });
 const router = express.Router();
 
 // CRUD: READ
@@ -84,6 +87,33 @@ router.put("/:id", async (req, res, next) => {
       res.json(productUpdated);
     } else {
       res.status(404).json({});
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Subida de imagen de producto
+
+router.post("/image-upload", upload.single("image"), async (req, res, next) => {
+  try {
+    const originalname = req.file.originalname;
+    const path = req.file.path;
+    const newPath = path + "_" + originalname;
+    fs.renameSync(path, newPath);
+
+    const productId = req.body.productId;
+    const product = await Product.findById(productId);
+
+    if (product) {
+      product.profileImage = newPath;
+      await product.save();
+      res.json(product);
+
+      console.log("Imagen de usuario modificada correctamente!");
+    } else {
+      fs.unlinkSync(newPath);
+      res.status(404).send("Usuario no encontrado");
     }
   } catch (error) {
     next(error);
