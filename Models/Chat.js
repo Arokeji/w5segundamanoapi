@@ -1,26 +1,25 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { Product } = require("./Product.js");
+const { User } = require("./Product.js");
 const { Message } = require("./Message.js");
 
 const chatSchema = new Schema(
   {
     buyer: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: User,
     },
     seller: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: User,
     },
     product: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: Product,
     },
     messages: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: Message,
     },
   },

@@ -17,17 +17,14 @@ const productSchema = new Schema(
       required: true,
     },
     pictures: {
-      type: String,
-      required: true,
+      type: String
     },
     buyer: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: User,
     },
     seller: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: User,
     },
   },

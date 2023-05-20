@@ -19,11 +19,11 @@ const connect = async () => {
     const database = await mongoose.connect(DB_CONNECTION, config);
     const name = database.connection.name;
     const host = database.connection.host;
-    console.log(`✅ Conectado a ${name} en ${host}`);
+    console.log(`💡 Conectado a ${name} en ${host}`);
     return database;
   } catch (error) {
     console.error(error);
-    console.log("❌ No se ha podido conectar. Se reintentará de nuevo en 5 segundos");
+    console.log("💤 No se ha podido conectar. Se reintentará de nuevo en 5 segundos");
     setTimeout(connect, 5000);
   }
 };

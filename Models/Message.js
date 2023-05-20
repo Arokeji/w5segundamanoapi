@@ -1,27 +1,23 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { Message } = require("./Message.js");
-const { Message } = require("./Message.js");
+const { User } = require("./User.js");
 
 const messageSchema = new Schema(
   {
     date: {
-      type: Number,
+      type: Date,
       required: true,
     },
     message: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: Message,
+      type: String,
+      required: true
     },
     emisor: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: User,
     },
     receptor: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: User,
     },
   },
