@@ -41,6 +41,26 @@ const productSeed = async () => {
         price: 25,
         description: "Cicloste con poco uso. Conservado en su caja",
       },
+      {
+        product: "102 huevos",
+        price: 10,
+        description: "Solo trato en mano",
+      },
+      {
+        product: "Penalto",
+        price: 12,
+        description: "2 metros de largo",
+      },
+      {
+        product: "Bicicleta",
+        price: 90,
+        description: "Sin sillin",
+      },
+      {
+        product: "Careta",
+        price: 15,
+        description: "Con la cara de otro",
+      },
     ];
 
     // Recuperacion de usuarios para asignarlos a productos

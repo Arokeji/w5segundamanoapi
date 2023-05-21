@@ -7,18 +7,23 @@ const chatSchema = new Schema(
     buyer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true
     },
     seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true
     },
     product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: Product,
+      required: true
     },
     messages: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Message",
+      type: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message",
+      }
     },
   },
   {

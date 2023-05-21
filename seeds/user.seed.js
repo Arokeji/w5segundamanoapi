@@ -27,16 +27,6 @@ const userSeed = async () => {
         name: "Humberto",
         email: "humberto@gmail.com",
         password: "12345678",
-      },
-      {
-        name: "Paco",
-        email: "paco@gmail.com",
-        password: "12345678",
-      },
-      {
-        name: "Pepe",
-        email: "pepe@gmail.com",
-        password: "12345678",
       }
     ];
 
