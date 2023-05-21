@@ -50,7 +50,6 @@ const chatSeed = async () => {
       chatList.push(newChat);
     }
 
-    console.log(chatList);
     // Insercion de chats
     const documents = chatList.map((chat) => new Chat(chat));
     await Chat.insertMany(documents);
