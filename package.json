@@ -8,7 +8,8 @@
     "seed:user": "node ./seeds/user.seed.js",
     "seed:product": "node ./seeds/product.seed.js",
     "seed:message": "node ./seeds/message.seed.js",
-    "seed:all": "npm run seed:user && npm run seed:product && npm run seed:message",
+    "seed:chat": "node ./seeds/chat.seed.js",
+    "seed:all": "npm run seed:user && npm run seed:product && npm run seed:message && npm run seed:chat",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "prepare": "husky install"
